@@ -233,11 +233,17 @@ including the SSE streaming path. CI runs it on every push.
 
 ## Team
 
-Built by **Team RecallDesk** for the *AI Agents That Learn Using Hindsight* track.
+**Team Legacy Legends** — *AI Agents That Learn Using Hindsight* track
 
-- Khadar Basha — backend & memory integration
+| Member | Role |
+|---|---|
+| **Shaik Adil** (Team Leader) | product & demo lead |
+| **Shaik Khadar Basha** | backend & Hindsight memory integration |
+| **Shaik Irfan** | frontend & Memory Inspector UI |
+| **Syed Shahid Ahamed** | testing & seed data design |
+| **Shaik Mohammad Murtuza Ayaan** | content & devops |
 
-*(add your teammates' names and roles here)*
+*(swap roles if they don't match who did what — keep them honest, recruiters ask)*
 
 ## License
 
