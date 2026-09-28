@@ -248,10 +248,22 @@ class HindsightLayer:
             for mm in models
         ]
 
-    def upsert_mental_model(self, name: str, text: str) -> None:
+    def upsert_mental_model(self, name: str, source_query: str) -> None:
+        """Create a mental model by *source query* — Hindsight runs reflect in the
+        background and stores the result. Idempotent: skips if the name exists.
+        """
         client = self._ensure_client()
         try:
-            client.create_mental_model(bank_id=settings.bank_id, name=name, text=text)
+            for mm in client.list_mental_models(bank_id=settings.bank_id) or []:
+                if str(getattr(mm, "name", "")) == name:
+                    return  # already exists — keep seeding idempotent
+            model_id = "".join(c if (c.isalnum() and c.islower()) or c == "-" else "-" for c in name.lower())
+            client.create_mental_model(
+                bank_id=settings.bank_id,
+                name=name,
+                source_query=source_query,
+                id=model_id.strip("-") or None,
+            )
         except Exception:
             logger.exception("create_mental_model failed for %s", name)
 

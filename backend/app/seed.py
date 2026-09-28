@@ -76,7 +76,7 @@ def run_seed() -> None:
         )
 
     for play in LEARNED_PLAYS:
-        hindsight_layer.upsert_mental_model(play["name"], play["text"])
+        hindsight_layer.upsert_mental_model(play["name"], play["source_query"])
 
     logger.info("Seeded bank %r", settings.bank_id)
 

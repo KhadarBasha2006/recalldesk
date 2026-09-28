@@ -75,8 +75,8 @@ class FakeHindsightClient:
     def list_mental_models(self, bank_id: str) -> List[FakeMemory]:
         return self.models.get(bank_id, [])
 
-    def create_mental_model(self, bank_id: str, name: str, text: str) -> None:
-        self.models.setdefault(bank_id, []).append(FakeMemory(id=name, text=text, type="mental_model"))
+    def create_mental_model(self, bank_id: str, name: str, source_query: str, id: str | None = None) -> None:
+        self.models.setdefault(bank_id, []).append(FakeMemory(id=id or name, text=source_query, type="mental_model"))
 
     def get_version(self) -> Dict[str, str]:
         return {"api_version": "test"}
