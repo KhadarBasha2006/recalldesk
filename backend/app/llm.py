@@ -96,6 +96,15 @@ def _with_retries(fn: Callable[[], Dict[str, Any]], attempts: int = 3, base_dela
 class GroqClient:
     """Thin, resilient wrapper around Groq's OpenAI-compatible chat API."""
 
+    def __init__(self) -> None:
+        self.mock = False
+        if not settings.groq_api_key:
+            if settings.allow_mock_llm:
+                logger.warning("No GROQ_API_KEY — using mock LLM replies (set the key for real answers)")
+                self.mock = True
+            else:
+                raise LLMError("GROQ_API_KEY is not set (ALLOW_MOCK_LLM=0 to forbid mock mode)")
+
     def chat(
         self,
         messages: List[Dict[str, Any]],
@@ -103,6 +112,8 @@ class GroqClient:
         temperature: float = 0.3,
         max_tokens: int = 900,
     ) -> LLMResponse:
+        if self.mock:
+            return self._mock_chat(messages)
         payload: Dict[str, Any] = {
             "model": settings.groq_model,
             "messages": messages,
@@ -133,6 +144,27 @@ class GroqClient:
             finish_reason=str(choice.get("finish_reason") or ""),
         )
 
+    def _mock_chat(self, messages: List[Dict[str, Any]]) -> LLMResponse:
+        """Deterministic reply so the full UI flow works without an API key."""
+        system = next((m for m in messages if m.get("role") == "system"), {})
+        content = system.get("content", "")
+        has_memory = "MEMORY CONTEXT" in content and "(none" not in content.split("MEMORY CONTEXT")[1][:80]
+        user = next((m for m in messages if m.get("role") == "user"), {})
+        text = str(user.get("content", ""))
+        if has_memory:
+            reply = (
+                "[mock LLM] Hi — I found your history in memory. I know about the nightly "
+                "disconnects on your replacement unit and the pending refund, so I won't ask "
+                "you to repeat any of it. Set GROQ_API_KEY to get real model replies."
+            )
+        else:
+            reply = (
+                "[mock LLM] I don't have prior history available for this conversation. "
+                "Could you share your order number and describe the issue?"
+            )
+        _ = text
+        return LLMResponse(content=reply, tool_calls=[], finish_reason="stop")
+
     def stream_chat(self, messages: List[Dict[str, Any]], temperature: float = 0.3, max_tokens: int = 900):
         """Yield content deltas from a streaming chat completion."""
         payload = {
@@ -142,6 +174,10 @@ class GroqClient:
             "max_tokens": max_tokens,
             "stream": True,
         }
+        if self.mock:
+            for word in self._mock_chat(messages).content.split(" "):
+                yield word + " "
+            return
         url = f"{settings.groq_base_url}/chat/completions"
         headers = {"Authorization": f"Bearer {settings.groq_api_key}", "Content-Type": "application/json"}
         with requests.post(url, headers=headers, json=payload, timeout=settings.request_timeout, stream=True) as resp:

@@ -31,7 +31,11 @@ class Settings:
     request_timeout: float = field(default_factory=lambda: float(os.getenv("REQUEST_TIMEOUT", "60")))
 
     # CORS
-    cors_origins: str = field(default_factory=lambda: os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"))
+    cors_origins: str = field(default_factory=lambda: os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174"))
+
+    # Demo fallbacks: run the full flow without external services.
+    allow_mock_hindsight: bool = field(default_factory=lambda: _bool_env("ALLOW_MOCK_HINDSIGHT", True))
+    allow_mock_llm: bool = field(default_factory=lambda: _bool_env("ALLOW_MOCK_LLM", True))
 
 
 settings = Settings()

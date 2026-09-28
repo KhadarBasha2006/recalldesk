@@ -34,9 +34,12 @@ class ChatRequest(BaseModel):
 
 @app.get("/api/health")
 def health() -> Dict[str, Any]:
+    hindsight_ok = hindsight_layer.health()
     return {
         "status": "ok",
-        "hindsight": hindsight_layer.health(),
+        "hindsight": hindsight_ok or hindsight_layer.using_mock,
+        "hindsight_mode": ("mock" if hindsight_layer.using_mock else ("live" if hindsight_ok else "down")),
+        "llm_mock": getattr(support_agent.llm, "mock", False),
         "model": settings.groq_model,
         "bank_id": settings.bank_id,
     }

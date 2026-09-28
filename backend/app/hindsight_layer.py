@@ -125,11 +125,59 @@ TOOLS_SPEC = [
 ]
 
 
+class _MockHindsight:
+    """In-memory stand-in used ONLY when a real Hindsight server is unreachable
+    and ALLOW_MOCK_HINDSIGHT=1 (default). Keeps the full UI/demo flow working;
+    the header badge honestly reports 'mock mode'.
+    """
+
+    def __init__(self) -> None:
+        self._memories: List[Dict[str, Any]] = []
+        self._models: List[Dict[str, Any]] = []
+        self._seq = 0
+
+    def _next_id(self, prefix: str) -> str:
+        self._seq += 1
+        return f"{prefix}-{self._seq}"
+
+    def create_bank(self, bank_id: str, **_: Any) -> None:
+        pass
+
+    def retain(self, bank_id: str, content: str, **kw: Any) -> None:
+        self._memories.append({
+            "id": self._next_id("m"), "text": content, "type": "world",
+            "created_at": kw.get("metadata", {}).get("ts", ""), "score": 1.0,
+        })
+
+    def recall(self, bank_id: str, query: str, **kw: Any) -> Any:
+        class _R:
+            def __init__(self, items: List[Dict[str, Any]]) -> None:
+                self.results = [type("M", (), {"text": m["text"], "type": m["type"], "score": 0.9})() for m in items]
+        return _R(self._memories[-8:])
+
+    def list_memories(self, bank_id: str, search_query: str | None = None, limit: int = 100, **_: Any) -> List[Dict[str, Any]]:
+        items = self._memories
+        if search_query:
+            q = search_query.lower()
+            items = [m for m in items if q in m["text"].lower()]
+        return items[-limit:]
+
+    def list_mental_models(self, bank_id: str) -> List[Dict[str, Any]]:
+        return self._models
+
+    def create_mental_model(self, bank_id: str, name: str, source_query: str, id: str | None = None) -> None:
+        self._models.append({"id": id or name, "name": name, "text": f"(source query) {source_query}"})
+
+    def get_version(self) -> Dict[str, str]:
+        return {"api_version": "mock"}
+
+
 class HindsightLayer:
     """All Hindsight operations used by RecallDesk, in one place."""
 
     def __init__(self) -> None:
         self._client: Any = None
+        self.using_mock = False
 
     # -- lifecycle ---------------------------------------------------------
     def _ensure_client(self) -> Any:
@@ -139,7 +187,21 @@ class HindsightLayer:
             kwargs: Dict[str, Any] = {"base_url": settings.hindsight_base_url}
             if settings.hindsight_api_key:
                 kwargs["api_key"] = settings.hindsight_api_key
-            self._client = Hindsight(**kwargs)
+            try:
+                probe = Hindsight(**kwargs)
+                probe.get_version()
+                self._client = probe
+                self.using_mock = False
+            except Exception as exc:
+                try:
+                    probe.close()  # release the aiohttp session from the failed probe
+                except Exception:
+                    pass
+                if not settings.allow_mock_hindsight:
+                    raise
+                logger.warning("Hindsight unreachable (%s) — using in-memory mock bank", exc)
+                self._client = _MockHindsight()
+                self.using_mock = True
         return self._client
 
     # -- bank --------------------------------------------------------------
