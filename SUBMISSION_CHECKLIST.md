@@ -1,5 +1,11 @@
 # ✅ Submission Checklist — HackwithHyderabad (deadline Sept 29)
 
+**Team: Legacy Legends** · Repo: https://github.com/KhadarBasha2006/recalldesk
+
+**Roster:** Shaik Adil (leader) · Shaik Khadar Basha · Shaik Irfan · Syed Shahid Ahamed · Shaik Mohammad Murtuza Ayaan
+
+> Content rule of thumb: **each of the 5 members** submits their own article + LinkedIn post (you may cover the same project from different angles); **one team** video total.
+
 One submission per team. Every field of the final submission form, in order, with what to do.
 
 ---

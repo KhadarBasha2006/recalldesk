@@ -6,7 +6,7 @@
 
 ## [0:00–0:30] Intro — on camera or over the home screen
 
-> "Hi, I'm [name], and this is RecallDesk — a customer-support agent that remembers every interaction a customer has ever had with the company. It's built on Hindsight, an agent memory system, with Groq's gpt-oss-120b as the reasoning model."
+> "Hi, I'm Shaik Adil from team Legacy Legends, and this is RecallDesk — a customer-support agent that remembers every interaction a customer has ever had with the company. It's built on Hindsight, an agent memory system, with Groq's gpt-oss-120b as the reasoning model."
 
 **On screen:** the RecallDesk UI, Memory Inspector visible on the right showing seeded memories (60+), stats: memories / observations / plays.
 
