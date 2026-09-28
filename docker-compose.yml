@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:latest
+    ports:
+      - "8888:8888"
+      - "9999:9999"
+    environment:
+      - HINDSIGHT_API_LLM_PROVIDER=groq
+      - HINDSIGHT_API_LLM_API_KEY=${GROQ_API_KEY}
+      - HINDSIGHT_API_LLM_MODEL=openai/gpt-oss-120b
+      - HINDSIGHT_API_WORKER_ID=hindsight-local
+    volumes:
+      - hindsight-data:/home/hindsight/.pg0
+    shm_size: "1g"
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_MODEL=openai/gpt-oss-120b
+      - HINDSIGHT_BASE_URL=http://hindsight:8888
+      - BANK_ID=recalldesk-demo
+    depends_on:
+      - hindsight
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - backend
+
+volumes:
+  hindsight-data:
