@@ -218,9 +218,14 @@ including the SSE streaming path. CI runs it on every push.
 
 ## Configuration
 
+> **Not limited to Groq.** Any OpenAI-compatible provider works — just change `GROQ_BASE_URL` and `GROQ_MODEL`:
+> `GROQ_BASE_URL=https://api.cerebras.ai/v1` + `GROQ_MODEL=llama3.1-8b` (Cerebras, free key at cloud.cerebras.ai),
+> `GROQ_BASE_URL=https://openrouter.ai/api/v1` + `GROQ_MODEL=meta-llama/llama-3.1-8b-instruct:free` (OpenRouter),
+> or plain OpenAI at `https://api.openai.com/v1`. With no key at all, RecallDesk runs in clearly-labeled mock mode.
+
 | Env var | Default | Purpose |
 |---|---|---|
-| `GROQ_API_KEY` | — | LLM for the agent (and for Hindsight's own extraction) |
+| `GROQ_API_KEY` | — | LLM key for the agent (and for Hindsight's own extraction) — works with **any** OpenAI-compatible provider below |
 | `HINDSIGHT_BASE_URL` | `http://localhost:8888` | Hindsight API |
 | `HINDSIGHT_API_KEY` | — | Only for Hindsight Cloud |
 | `BANK_ID` | `recalldesk-demo` | Memory bank id |
@@ -228,11 +233,11 @@ including the SSE streaming path. CI runs it on every push.
 
 ## Team
 
-Built by **Team [your-team-name]** for the *AI Agents That Learn Using Hindsight* track.
+Built by **Team RecallDesk** for the *AI Agents That Learn Using Hindsight* track.
 
-- [Your Name] — backend & memory integration
-- [Teammate] — frontend & demo
-- [Teammate] — content & testing
+- Khadar Basha — backend & memory integration
+
+*(add your teammates' names and roles here)*
 
 ## License
 

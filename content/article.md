@@ -8,7 +8,7 @@ Last month our support agent asked a customer for her order number. It was the f
 
 The problem wasn't the model. The problem was that the model had no memory. Every session started from zero, so every session re-litigated history the company already owned.
 
-I built [RecallDesk](https://github.com/your-username/recalldesk) to fix that. This post is about the design decision that mattered most: making memory the backbone of the agent rather than a search box on the side.
+I built [RecallDesk](https://github.com/KhadarBasha2006/recalldesk) to fix that. This post is about the design decision that mattered most: making memory the backbone of the agent rather than a search box on the side.
 
 ## What the system does
 
@@ -91,4 +91,4 @@ Two things bite every LLM agent, so we handled them up front:
 
 The next step is connecting the same bank to real email tickets, so the agent walks into every conversation with six months of context instead of six chats.
 
-If you want to poke at the code: [RecallDesk on GitHub](https://github.com/your-username/recalldesk). The memory layer is [Hindsight](https://hindsight.vectorize.io/) — [agent memory](https://vectorize.io/what-is-agent-memory) that retains, recalls, and reflects.
+If you want to poke at the code: [RecallDesk on GitHub](https://github.com/KhadarBasha2006/recalldesk). The memory layer is [Hindsight](https://hindsight.vectorize.io/) — [agent memory](https://vectorize.io/what-is-agent-memory) that retains, recalls, and reflects.

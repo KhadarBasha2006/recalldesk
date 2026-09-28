@@ -18,7 +18,7 @@ RecallDesk runs on Hindsight agent memory — and the difference is not cosmetic
 
 The hard part was never retrieval. It was deciding what the agent should never have to ask.
 
-Repo: [your GitHub link]
+Repo: https://github.com/KhadarBasha2006/recalldesk
 
 #AIAgents #AgentMemory #Hindsight #LLM #AI
 

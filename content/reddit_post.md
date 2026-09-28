@@ -27,5 +27,5 @@ Stack: Python + FastAPI, Groq (openai/gpt-oss-120b), Hindsight for memory, React
 
 Happy to answer questions about the memory design — especially the contradiction handling and the tool-call error hardening.
 
-Repo: [your GitHub link]
+Repo: https://github.com/KhadarBasha2006/recalldesk
 Article: [your article link]
